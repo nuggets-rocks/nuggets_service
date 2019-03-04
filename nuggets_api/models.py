@@ -28,7 +28,7 @@ class Nugget(models.Model):
     def create_new_nugget(cls, user, content, source):
         nugget = cls.objects.create(
             creator=user,
-            content=text,
+            content=content,
             source=source)
         cls.add_existing_nugget(
             nugget=nugget,
@@ -42,8 +42,8 @@ class Nugget(models.Model):
         Nugget.objects.filter(id=nugget.id).update(deleted_at=datetime.now())
 
     @classmethod
-    def update_nugget(cls, user, nugget, new_nugget_text):
-        Nugget.objects.filter(id=nugget.id, creator=user).update(content=new_nugget_text)
+    def update_nugget(cls, user, nugget, new_nugget_content):
+        Nugget.objects.filter(id=nugget.id, creator=user).update(content=new_nugget_content)
 
     @classmethod
     def add_existing_nugget(cls, nugget, user, is_owner=False):
@@ -92,3 +92,5 @@ class NuggetUser(models.Model):
     @classmethod
     def delete_nugget_user(cls, user, nugget):
         NuggetUser.objects.filter(user=user, nugget=nugget).update(deleted_at=datetime.now())
+
+import signals
