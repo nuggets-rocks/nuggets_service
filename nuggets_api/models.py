@@ -92,5 +92,3 @@ class NuggetUser(models.Model):
     @classmethod
     def delete_nugget_user(cls, user, nugget):
         NuggetUser.objects.filter(user=user, nugget=nugget).update(deleted_at=datetime.now())
-
-import signals
