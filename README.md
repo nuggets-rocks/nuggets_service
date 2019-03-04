@@ -27,15 +27,16 @@ Run django migrations and server:
 
 Visit http://localhost:8000 and see something
 
-Trouble shooting.
-- django.core.exceptions.ImproperlyConfigured: Error loading MySQLdb module. Did you install mysqlclient?
-pip install pymysql
+If you run into issues, try the following to trouble shoot:
+Error: django.core.exceptions.ImproperlyConfigured: Error loading MySQLdb module. Did you install mysqlclient?
+Solution:
+pip3.7 install pymysql
 Then, edit the __init__.py file in your project origin dir(the same as settings.py)
 add:
 import pymysql
 pymysql.install_as_MySQLdb()
 source https://stackoverflow.com/questions/46902357/error-loading-mysqldb-module-did-you-install-mysqlclient-or-mysql-python
 
--raise RuntimeError("cryptography is required for sha256_password or caching_sha2_password")
+Error: raise RuntimeError("cryptography is required for sha256_password or caching_sha2_password")
 RuntimeError: cryptography is required for sha256_password or caching_sha2_password
-pip3.7 install cryptography
+Solution: pip3.7 install cryptography
