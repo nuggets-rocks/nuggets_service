@@ -10,7 +10,7 @@ Make sure you have Python 3.7 and pip installed
 
 Make sure you have django and mysqlclient installed 
 * `pip3.7 install django`
-* `pip3.7 install django`
+* `pip3.7 install mysqlclient`
 
 Make sure you have mysql >5.6 installed (I used brew)
 * `brew install mysql`
