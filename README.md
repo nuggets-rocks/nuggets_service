@@ -24,6 +24,7 @@ Set up the database with the following commands:
 Run django migrations and server:
 * `python3.7 manage.py migrate`
 * `python3.7 manage.py runserver`
+* `pip3 install djangorestframework`
 
 Visit http://localhost:8000 and see something
 
