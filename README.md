@@ -43,3 +43,6 @@ source https://stackoverflow.com/questions/46902357/error-loading-mysqldb-module
 * Error: `raise RuntimeError("cryptography is required for sha256_password or caching_sha2_password")
 RuntimeError: cryptography is required for sha256_password or caching_sha2_password`
 * Solution: pip3.7 install cryptography
+
+* Error: "Table 'nuggets.nuggets_api_nuggetuser' doesn't exist"
+* Solution: python3.7 manage.py makemigrations [We regenerate the dB from the model]
