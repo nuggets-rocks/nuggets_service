@@ -1,4 +1,5 @@
 from rest_framework.decorators import api_view
+from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework import status
 from rest_framework.response import Response
 from django.contrib.auth.models import User
@@ -24,6 +25,13 @@ def nuggets_op_by_user(request, user_id):
             Nugget.create_new_nugget(user, serializer.validated_data['content'], serializer.validated_data['source'])
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'POST'])
+@authentication_classes([]) # Don't require a token for calling create_user
+@permission_classes([])
+def create_new_user(request, user_name, password):
+    user = User.objects.create_user(user_name, 'email-address', password);
+    return Response(status=status.HTTP_201_CREATED)
 
 
 @api_view(['DELETE', 'PUT', 'GET'])
