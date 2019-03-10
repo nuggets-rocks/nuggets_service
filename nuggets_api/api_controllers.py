@@ -31,7 +31,7 @@ def nuggets_op_by_user(request, user_id):
 @permission_classes([])
 def create_new_user(request, user_name, password):
     user = User.objects.create_user(user_name, 'email-address', password);
-    return Response(status=status.HTTP_201_CREATED)
+    return Response({'user_id': user.id})
 
 
 @api_view(['DELETE', 'PUT', 'GET'])
