@@ -2,6 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 from .models import Nugget
 from .serializers import NuggetSerializer
@@ -30,9 +31,16 @@ def nuggets_op_by_user(request, user_id):
 @authentication_classes([]) # Don't require a token for calling create_user
 @permission_classes([])
 def create_new_user(request, user_name, password):
-    user = User.objects.create_user(user_name, 'email-address', password);
-    return Response({'user_id': user.id})
-
+    try:
+        # Attempt to fetch existing user
+        User.objects.get(username=user_name)
+    except User.DoesNotExist:
+        user = User.objects.create_user(user_name, 'email-address', password);
+        # Auth token which should be supplied from all requests for the user.
+        token = Token.objects.get(user_id=user.id);
+        return Response({'user_id': user.id, 'token': token.key})
+    # else return a client error code
+    return Response(status=status.HTTP_409_CONFLICT)
 
 @api_view(['DELETE', 'PUT', 'GET'])
 def nuggets_op_by_user_and_nugget(request, user_id, nugget_id):
