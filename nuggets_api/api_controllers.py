@@ -6,6 +6,7 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 from .models import Nugget
 from .serializers import NuggetSerializer
+from django.contrib.auth import authenticate
 
 
 @api_view(['GET', 'POST'])
@@ -46,6 +47,17 @@ def create_new_user(request, user_name, password):
         return Response({'user_id': user.id, 'token': token.key})
     # else return a client error code
     return Response(status=status.HTTP_409_CONFLICT)
+
+@api_view(['GET'])
+@authentication_classes([]) # Don't require a token for calling authenticateUser
+@permission_classes([])
+def authenticate_user(request, user_name, password):
+    user = authenticate(username=user_name, password=password)
+    if user is not None:
+        token = Token.objects.get(user_id=user.id);
+        return Response({'user_id': user.id, 'token': token.key})
+    else:
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['GET'])
 def create_new_nugget(request, user_id, content, source):
