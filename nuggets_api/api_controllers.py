@@ -20,6 +20,11 @@ def nuggets_op_by_user(request, user_id):
         serializer = NuggetSerializer(nuggets, many=True)
         return Response(serializer.data)
 
+    #TODO: Deprecate in favor of create_new_user?
+    #shiva: was running into the following error when calling POST:
+    #"creator": [
+    #    "This field is required."
+    #]
     elif request.method == 'POST':
         serializer = NuggetSerializer(user, data=request.data)
         if serializer.is_valid():
@@ -27,7 +32,7 @@ def nuggets_op_by_user(request, user_id):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET', 'POST'])
+@api_view(['GET'])
 @authentication_classes([]) # Don't require a token for calling create_user
 @permission_classes([])
 def create_new_user(request, user_name, password):
@@ -41,6 +46,19 @@ def create_new_user(request, user_name, password):
         return Response({'user_id': user.id, 'token': token.key})
     # else return a client error code
     return Response(status=status.HTTP_409_CONFLICT)
+
+@api_view(['GET'])
+def create_new_nugget(request, user_id, content, source):
+    try:
+        # Check for existing user
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    newnugget = Nugget.create_new_nugget(user, content, source)
+
+    serializer = NuggetSerializer(newnugget, many=False)
+    return Response(serializer.data)
 
 @api_view(['DELETE', 'PUT', 'GET'])
 def nuggets_op_by_user_and_nugget(request, user_id, nugget_id):
