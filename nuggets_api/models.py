@@ -3,7 +3,6 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.db.models import Q
-from django.db.models.functions import Extract
 from .utils import date_for_x_days_before_today
 
 
@@ -83,54 +82,27 @@ class NuggetUser(models.Model):
 
     @classmethod
     def get_todays_review_nugget_users_by_user(cls, user, exclude_deleted=True):
-        review_interval_days = [1, 3, 7, 14, 30, 90, 180, 360, 720]
+        review_interval_days = [0, 1, 3, 7, 14, 30, 90, 180, 360, 720]
 
-        
-
-        review_dates2 = date_for_x_days_before_today(1)
-        #review_dates = [date_for_x_days_before_today(n) for n in review_interval_days]
-        #today = datetime.date.today();
-
-        # toreturn = cls.objects.annotate(
-        #     year = Extract('created_at','year'))
-
+        # elements of review_dates are of type <class 'datetime.date'>
+        review_dates = [date_for_x_days_before_today(n) for n in review_interval_days]
 
         q_objects = Q(user=user)
-        #             and Q(created_at__lte=
-        #                   datetime(2019, 3, 23, hour=5, minute=40, second=9, microsecond=0,tzinfo=timezone.utc))
-        #             #and Q(created_at__month__lte=12)  # __date casts the datetime value as date
-        #
         if exclude_deleted:
             q_objects.add(Q(deleted_at__isnull=True), Q.AND)
-        # #return cls.objects.filter(created_at__month)
-        toreturn = cls.objects.filter(q_objects)
 
-        buildNew = []
-        for x in toreturn:
-                # this is datetime.datetime
-                dd = x.created_at
-                #print(dd.month) -- works
-                if dd.date() == date(2019,3,11):
-                    print('woohoo')
-                    buildNew.append(x)
-                print(dd.date())
-        print('Goodbye!')
-        return buildNew
-
-        # return cls.objects.filter(
-        #     Extract('created_at', 'year')='2019')
-
-
-
-        # q_objects = Q(user=user) \
-        #             and Q(created_at__lte=
-        #                   datetime(2019, 3, 23, hour=5, minute=40, second=9, microsecond=0,tzinfo=timezone.utc))
-        #             #and Q(created_at__month__lte=12)  # __date casts the datetime value as date
-        #
-        # if exclude_deleted:
-        #     q_objects.add(Q(deleted_at__isnull=True), Q.AND)
-        # #return cls.objects.filter(created_at__month)
-        # return cls.objects.filter(q_objects)
+        # Note that Q(created_at__date__in=review_dates) doesn't cast
+        # to datetime.date but to <datetime.datetime>
+        # Note - seems inefficient to load all the nuggets for the user in
+        # memory and filter them and we risk OOM-ing with large number of
+        # nuggets. Better to rely on a database index.
+        nuggetUserEntriesForReview = []
+        for x in cls.objects.filter(q_objects):
+                # dd is of type datetime.datetime and we need to
+                # get the datetime.date from it
+                if x.created_at.date() in review_dates:
+                    nuggetUserEntriesForReview.append(x)
+        return nuggetUserEntriesForReview
 
     @classmethod
     def delete_nugget_user(cls, user, nugget):
