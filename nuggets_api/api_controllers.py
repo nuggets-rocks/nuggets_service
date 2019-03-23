@@ -9,6 +9,19 @@ from .serializers import NuggetSerializer
 from django.contrib.auth import authenticate
 
 
+
+@api_view(['GET'])
+def nuggets_to_review_by_user(request, user_id):
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        nuggets = Nugget.get_todays_review_nuggets_by_user(user)
+        serializer = NuggetSerializer(nuggets, many=True)
+        return Response(serializer.data)
+
 @api_view(['GET', 'POST'])
 def nuggets_op_by_user(request, user_id):
     try:
