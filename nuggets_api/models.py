@@ -14,7 +14,7 @@ class Nugget(models.Model):
 
     created_at = models.DateTimeField(default=timezone.now, db_index=True)
     updated_at = models.DateTimeField(default=timezone.now)
-    deleted_at = models.DateTimeField(null=True)
+    deleted_at = models.DateTimeField(null=True, blank=True)
 
     @classmethod
     def get_nuggets_by_user(cls, user, exclude_deleted=True):
@@ -64,7 +64,7 @@ class NuggetUser(models.Model):
     created_at = models.DateTimeField(default=timezone.now, db_index=True)
     updated_at = models.DateTimeField(default=timezone.now)
     is_owner = models.BooleanField(default=False)
-    deleted_at = models.DateTimeField(null=True)
+    deleted_at = models.DateTimeField(null=True, blank=True)
 
     @classmethod
     def add_new_nugget_for_user(cls, nugget, user, is_owner=False):
