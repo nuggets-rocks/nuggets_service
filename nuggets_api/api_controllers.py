@@ -42,7 +42,7 @@ def nuggets_op_by_user(request, user_id):
     elif request.method == 'POST':
         serializer = NuggetSerializer(user, data=request.data)
         if serializer.is_valid():
-            Nugget.create_new_nugget(user, serializer.validated_data['content'], serializer.validated_data['source'])
+            Nugget.create_new_nugget(user, serializer.validated_data['content'], serializer.validated_data['source'], serializer.validated_data['url'])
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -73,14 +73,14 @@ def authenticate_user(request, user_name, password):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['GET'])
-def create_new_nugget(request, user_id, content, source):
+def create_new_nugget(request, user_id, content, source, url):
     try:
         # Check for existing user
         user = User.objects.get(id=user_id)
     except User.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    newnugget = Nugget.create_new_nugget(user, content, source)
+    newnugget = Nugget.create_new_nugget(user, content, source, url)
 
     serializer = NuggetSerializer(newnugget, many=False)
     return Response(serializer.data)

@@ -10,6 +10,7 @@ from .utils import date_for_x_days_before_today
 class Nugget(models.Model):
     source = models.TextField(null=False)
     content = models.TextField(null=False)
+    url = models.TextField(null=True)
     creator = models.ForeignKey(User, on_delete=models.CASCADE)
 
     created_at = models.DateTimeField(default=timezone.now, db_index=True)
@@ -25,11 +26,12 @@ class Nugget(models.Model):
         return [x.nugget for x in NuggetUser.get_todays_review_nugget_users_by_user(user, exclude_deleted)]
 
     @classmethod
-    def create_new_nugget(cls, user, content, source):
+    def create_new_nugget(cls, user, content, source, url):
         nugget = cls.objects.create(
             creator=user,
             content=content,
-            source=source)
+            source=source,
+            url = url)
         cls.add_existing_nugget(
             nugget=nugget,
             user=user,
