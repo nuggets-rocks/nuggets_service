@@ -23,7 +23,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^login$', TemplateView.as_view(template_name='login.html')),
     url(r'^google5c17accd1a8ca615\.html$', lambda r: HttpResponse("google-site-verification: "
-                                                                  "google5c17accd1a8ca615.html",
-                                                                  mimetype="text/plain")),
+                                                                  "google5c17accd1a8ca615.html")),
     url(r'', include('nuggets_api.urls')),
 ]
