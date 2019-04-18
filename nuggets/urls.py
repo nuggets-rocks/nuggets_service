@@ -14,6 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.http import HttpResponse
 from django.urls import path
 from django.conf.urls import include, url
 from django.views.generic import TemplateView
@@ -21,5 +22,8 @@ from django.views.generic import TemplateView
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^login$', TemplateView.as_view(template_name='login.html')),
+    url(r'^google5c17accd1a8ca615\.html$', lambda r: HttpResponse("google-site-verification: "
+                                                                  "google5c17accd1a8ca615.html",
+                                                                  mimetype="text/plain")),
     url(r'', include('nuggets_api.urls')),
 ]
