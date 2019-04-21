@@ -46,3 +46,20 @@ RuntimeError: cryptography is required for sha256_password or caching_sha2_passw
 
 * Error: "Table 'nuggets.nuggets_api_nuggetuser' doesn't exist"
 * Solution: python3.7 manage.py makemigrations [We regenerate the dB from the model]
+
+## Sample requests
+```
+curl -XGET https://nuggets-service.herokuapp.com/api/v0/user/3/review/ -H
+'Authorization: Token e507c000d665511ac464c9251f7ef277d9b72296' | jq .
+```
+
+## Update schema after model change
+
+Our deployed heroku app is running postgressql and so seems like running python migration won't regen the database. To
+update the scheme, manually modify the schema:
+
+```
+heroku run python manage.py dbshell --app nuggets-service
+
+ALTER TABLE nuggets_api_nugget ADD COLUMN url text;
+```
