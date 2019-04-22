@@ -50,7 +50,7 @@ RuntimeError: cryptography is required for sha256_password or caching_sha2_passw
 ## Sample requests
 ```
 curl -XGET https://nuggets-service.herokuapp.com/api/v0/user/3/review/ -H
-'Authorization: Token e507c000d665511ac464c9251f7ef277d9b72296' | jq .
+'Authorization: Token IlMuIiwiZmFtaWx5X25hbWUiOiJHLiIsImxvY2FsZSI6Im' | jq .
 ```
 
 ## Update schema after model change

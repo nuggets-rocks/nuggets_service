@@ -1,12 +1,66 @@
+import binascii
+import os
+
 from datetime import datetime, date
 from django.db import models
+from django.conf import settings
 from django.utils import timezone
 from django.contrib.auth.models import User
+#from rest_framework.authtoken.models import Token
 from django.db.models import Q
 from .utils import date_for_x_days_before_today
+from django.utils.translation import ugettext_lazy as _
 
 
 # Create your models here.
+class NuggetsToken(models.Model):
+    """
+    The default authorization token model.
+    https://github.com/encode/django-rest-framework/blob/master/rest_framework/authtoken/models.py
+    """
+    # Switch key to textField since google token are > 1000 chars
+    # Note that token length is constraint to 255 chars due to limitations of mysql.
+    key = models.CharField(_("Key"), max_length=255, primary_key=True)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, related_name='nuggets_auth_token',
+        on_delete=models.CASCADE, verbose_name=_("User")
+    )
+    given_name = models.TextField(null=True)
+    family_name = models.TextField(null=True)
+    profile_url = models.TextField(null=True)
+    google_email = models.TextField(null=True)
+
+    class Meta:
+        # Work around for a bug in Django:
+        # https://code.djangoproject.com/ticket/19422
+        #
+        # Also see corresponding ticket:
+        # https://github.com/encode/django-rest-framework/issues/705
+        abstract = 'rest_framework.authtoken' not in settings.INSTALLED_APPS
+        verbose_name = _("Token")
+        verbose_name_plural = _("Tokens")
+
+    def save(self, *args, **kwargs):
+        if not self.key:
+            self.key = self.generate_key()
+        return super(NuggetsToken, self).save(*args, **kwargs)
+
+    def generate_key(self):
+        return binascii.hexlify(os.urandom(20)).decode()
+
+    @classmethod
+    def create_with_custom_token(cls, user, token, given_name, family_name, profile_url, google_email):
+        return cls.objects.create(
+            key=token,
+            user=user,
+            given_name = given_name,
+            family_name = family_name,
+            profile_url = profile_url,
+            google_email = google_email)
+
+    def __str__(self):
+        return self.key
+
 class Nugget(models.Model):
     source = models.TextField(null=False)
     content = models.TextField(null=False)

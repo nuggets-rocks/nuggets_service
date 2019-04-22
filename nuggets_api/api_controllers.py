@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 from .models import Nugget
+from .models import NuggetsToken
 from .serializers import NuggetSerializer
 from django.contrib.auth import authenticate
 
@@ -66,6 +67,23 @@ def create_new_user(request, user_name, password):
     # else return a client error code
     return Response(status=status.HTTP_409_CONFLICT)
 
+
+@api_view(['GET'])
+@authentication_classes([]) # Don't require a token for calling create_user
+@permission_classes([])
+def create_new_user_v2(request, email, token, firstName, lastName, profileUrl):
+    try:
+        # Attempt to fetch existing user
+        User.objects.get(username=email)
+    except User.DoesNotExist:
+        #TODO(validate creds against Google Api) and only create if auth passes.
+        # Create user as well as the nugget token which saves the Google Token.
+        user = User.objects.create_user(email, email, password=None)
+        # Auth token which should be supplied from all requests for the user.
+        nuggetsToken = NuggetsToken.create_with_custom_token(user, token, firstName, lastName,profileUrl, email)
+        return Response({'user_id': user.id, 'token': nuggetsToken.key, 'email': nuggetsToken.google_email})
+    # user was found. Check if the token matches
+    return Response(status=status.HTTP_409_CONFLICT)
 
 @api_view(['GET'])
 @authentication_classes([]) # Don't require a token for calling authenticateUser
