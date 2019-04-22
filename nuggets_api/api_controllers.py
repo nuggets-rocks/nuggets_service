@@ -71,19 +71,26 @@ def create_new_user(request, user_name, password):
 @api_view(['GET'])
 @authentication_classes([]) # Don't require a token for calling create_user
 @permission_classes([])
-def create_new_user_v2(request, email, token, firstName, lastName, profileUrl):
+def get_or_create_user_v2(request, email, token, firstName, lastName, profileUrl):
     try:
         # Attempt to fetch existing user
-        User.objects.get(username=email)
+        user = User.objects.get(username=email)
+        if user is not None:
+            token = NuggetsToken.objects.get(key=token, user_id = user.id)
+            if token is not None:
+                # Found user with matching email & token.
+                return Response({'user_id': user.id, 'token': token.key, 'email': token.google_email})
+            # user was found, but the token does not match. Call Google API to verify and update token
+            # if needed.
+            # TODO
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
     except User.DoesNotExist:
-        #TODO(validate creds against Google Api) and only create if auth passes.
+        #TODO: validate creds against Google API and only create if auth passes.
         # Create user as well as the nugget token which saves the Google Token.
         user = User.objects.create_user(email, email, password=None)
-        # Auth token which should be supplied from all requests for the user.
+        # Create a nuggets token which should be supplied from all requests for the user.
         nuggetsToken = NuggetsToken.create_with_custom_token(user, token, firstName, lastName,profileUrl, email)
         return Response({'user_id': user.id, 'token': nuggetsToken.key, 'email': nuggetsToken.google_email})
-    # user was found. Check if the token matches
-    return Response(status=status.HTTP_409_CONFLICT)
 
 @api_view(['GET'])
 @authentication_classes([]) # Don't require a token for calling authenticateUser
