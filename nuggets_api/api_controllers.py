@@ -8,6 +8,10 @@ from .models import Nugget
 from .models import NuggetsToken
 from .serializers import NuggetSerializer
 from django.contrib.auth import authenticate
+from google.oauth2 import id_token
+from google.auth.transport import requests
+
+CLIENT_ID = "347029058932-u9t5hv4a3e7v2u162hdnjgnjuu1frda0.apps.googleusercontent.com"
 
 
 @api_view(['GET'])
@@ -68,29 +72,34 @@ def create_new_user(request, user_name, password):
     return Response(status=status.HTTP_409_CONFLICT)
 
 
-@api_view(['GET'])
+@api_view(['POST'])
 @authentication_classes([]) # Don't require a token for calling create_user
 @permission_classes([])
-def get_or_create_user_v2(request, email, token, firstName, lastName, profileUrl):
+def get_or_create_user_v2(request):
+    token = request.data.id_token
+    email = request.data.email
+    first_name = request.data.first_name
+    last_name = request.data.last_name
+    profile_url = request.data.profile_url
+    idinfo = id_token.verify_oauth2_token(token, requests.Request(), CLIENT_ID)
+    if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
+
     try:
         # Attempt to fetch existing user
         user = User.objects.get(username=email)
         if user is not None:
-            token = NuggetsToken.objects.get(key=token, user_id = user.id)
+            token = NuggetsToken.objects.get(user_id=user.id)
             if token is not None:
                 # Found user with matching email & token.
                 return Response({'user_id': user.id, 'token': token.key, 'email': token.google_email})
-            # user was found, but the token does not match. Call Google API to verify and update token
-            # if needed.
-            # TODO
         return Response(status=status.HTTP_401_UNAUTHORIZED)
     except User.DoesNotExist:
-        #TODO: validate creds against Google API and only create if auth passes.
-        # Create user as well as the nugget token which saves the Google Token.
+        # Create user as well as the nugget token.
         user = User.objects.create_user(email, email, password=None)
         # Create a nuggets token which should be supplied from all requests for the user.
-        nuggetsToken = NuggetsToken.create_with_custom_token(user, token, firstName, lastName,profileUrl, email)
-        return Response({'user_id': user.id, 'token': nuggetsToken.key, 'email': nuggetsToken.google_email})
+        nuggets_token = NuggetsToken.create_with_custom_token(user, first_name, last_name, profile_url, email)
+        return Response({'user_id': user.id, 'token': nuggets_token.key, 'email': nuggets_token.google_email})
 
 @api_view(['GET'])
 @authentication_classes([]) # Don't require a token for calling authenticateUser

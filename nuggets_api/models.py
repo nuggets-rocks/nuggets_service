@@ -6,7 +6,7 @@ from django.db import models
 from django.conf import settings
 from django.utils import timezone
 from django.contrib.auth.models import User
-#from rest_framework.authtoken.models import Token
+# from rest_framework.authtoken.models import Token
 from django.db.models import Q
 from .utils import date_for_x_days_before_today
 from django.utils.translation import ugettext_lazy as _
@@ -49,17 +49,17 @@ class NuggetsToken(models.Model):
         return binascii.hexlify(os.urandom(20)).decode()
 
     @classmethod
-    def create_with_custom_token(cls, user, token, given_name, family_name, profile_url, google_email):
+    def create_with_custom_token(cls, user, given_name, family_name, profile_url, google_email):
         return cls.objects.create(
-            key=token,
             user=user,
-            given_name = given_name,
-            family_name = family_name,
-            profile_url = profile_url,
-            google_email = google_email)
+            given_name=given_name,
+            family_name=family_name,
+            profile_url=profile_url,
+            google_email=google_email)
 
     def __str__(self):
         return self.key
+
 
 class Nugget(models.Model):
     source = models.TextField(null=False)
@@ -85,7 +85,7 @@ class Nugget(models.Model):
             creator=user,
             content=content,
             source=source,
-            url = url)
+            url=url)
         cls.add_existing_nugget(
             nugget=nugget,
             user=user,
@@ -154,10 +154,10 @@ class NuggetUser(models.Model):
         # nuggets. Better to rely on a database index.
         nuggetUserEntriesForReview = []
         for x in cls.objects.filter(q_objects):
-                # dd is of type datetime.datetime and we need to
-                # get the datetime.date from it
-                if x.created_at.date() in review_dates:
-                    nuggetUserEntriesForReview.append(x)
+            # dd is of type datetime.datetime and we need to
+            # get the datetime.date from it
+            if x.created_at.date() in review_dates:
+                nuggetUserEntriesForReview.append(x)
         return nuggetUserEntriesForReview
 
     @classmethod
