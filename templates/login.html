@@ -7,7 +7,6 @@
     <meta name="google-signin-scope" content="profile email">
     <meta name="google-signin-client_id" content="347029058932-u9t5hv4a3e7v2u162hdnjgnjuu1frda0.apps.googleusercontent.com">
     <script src="https://apis.google.com/js/platform.js" async defer></script>
-
     <title>Nuggets Login</title>
 </head>
 <body>
@@ -37,7 +36,26 @@
         console.log("ID Token: " + id_token);
 
         // call this API with ^ in body url api/v1/authenticate$
+
+        // meanwhile, use hardcoded creds:
+        passTokenToChromeExtension({user_id: 44, token: "IlMuIi2mFtaWx5X25hbWUiOiJHLiIsImx2vY2FsZSI6Im", email: "chivagarg4@gmail.com"});
       }
+
+
+      function passTokenToChromeExtension(context) {
+        // This will be stable once published in the app store.
+        // For now, points to shiva's dev chrome ext id.
+        var extensionId = "pecocjibbceeifnjjehnjljphkobkcib";
+        chrome.runtime.sendMessage(extensionId, {nuggetsMessage: context},
+          function(response) {
+            console.log("Message sent");
+            console.log(response);
+            // if (!response.success)
+            //  handleError(url);
+          });
+      }
+
+
     </script>
 
 </body>
