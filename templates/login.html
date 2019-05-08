@@ -4,9 +4,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-{#    <meta name="google-signin-scope" content="profile email">#}
-{#    <meta name="google-signin-client_id" content="347029058932-u9t5hv4a3e7v2u162hdnjgnjuu1frda0.apps.googleusercontent.com">#}
-{#    <script src="https://apis.google.com/js/platform.js" async defer></script>#}
+    <meta name="google-signin-scope" content="profile email">
+    <meta name="google-signin-client_id" content="347029058932-u9t5hv4a3e7v2u162hdnjgnjuu1frda0.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
     <title>Nuggets Login</title>
 </head>
 <body>
@@ -42,7 +42,7 @@
         xhr.onload = function() {
             console.log('Signed in as: ' + xhr.responseText);
             let resp = JSON.parse(xhr.responseText);
-            
+
             // Successful login - let's also change text
             document.getElementById("displayText").innerHTML = "Successfully authenticated! You can continue using Nuggets now.";
             passTokenToChromeExtension({user_id: resp.user_id, token: resp.token, email: resp.email});
