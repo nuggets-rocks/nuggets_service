@@ -76,11 +76,11 @@ def create_new_user(request, user_name, password):
 @authentication_classes([]) # Don't require a token for calling create_user
 @permission_classes([])
 def get_or_create_user_v2(request):
-    token = request.data.id_token
-    email = request.data.email
-    first_name = request.data.first_name
-    last_name = request.data.last_name
-    profile_url = request.data.profile_url
+    token = request.id_token
+    email = request.email
+    first_name = request.first_name
+    last_name = request.last_name
+    profile_url = request.profile_url
     idinfo = id_token.verify_oauth2_token(token, requests.Request(), CLIENT_ID)
     if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
         return Response(status=status.HTTP_401_UNAUTHORIZED)
