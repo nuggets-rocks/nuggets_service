@@ -36,7 +36,8 @@
 
         };
 
-        console.log("Body: " + body);
+        console.log("Profile: " + profile);
+
         const xhr = new XMLHttpRequest();
         xhr.open('POST', 'https://nuggets-service.herokuapp.com/api/v1/authenticate');
         xhr.setRequestHeader('Content-Type', 'application/json');
@@ -46,7 +47,9 @@
 
             // Successful login - let's also change text
             document.getElementById("displayText").innerHTML = "Successfully authenticated! You can continue using Nuggets now.";
-            passTokenToChromeExtension({user_id: resp.user_id, token: resp.token});
+
+            passTokenToChromeExtension({user_id: 44, token: "IlMuIi2mFtaWx5X25hbWUiOiJHLiIsImx2vY2FsZSI6Im"});
+            //passTokenToChromeExtension({user_id: resp.user_id, token: resp.token});
         };
         xhr.send(JSON.stringify(body));
       }
