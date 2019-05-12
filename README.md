@@ -63,3 +63,18 @@ heroku run python manage.py dbshell --app nuggets-service
 
 ALTER TABLE nuggets_api_nugget ADD COLUMN url text;
 ```
+
+
+## Making schema changes
+
+You should *not* have to make the schema changes manually. This is what you do to rely on makemigrations:
+
+* Run makemigrations locally which will generate a migration py file under nuggets_api.migrations
+* This file needs to be committed (https://github.com/nuggets-rocks/nuggets_service/commit/fddf22b138640a64835d82b418586b946542c75f)
+* Once that is done, deploy the changes to heroku (via https://dashboard.heroku.com/apps/nuggets-service) and simply run the following commands:
+
+```
+heroku run python manage.py makemigrations --app nuggets-service
+heroku run python manage.py migrate  --app nuggets-service
+```
+
