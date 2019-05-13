@@ -57,15 +57,19 @@
       function passTokenToChromeExtension(context) {
         // This will be stable once published in the app store.
         // For now, points to shiva's dev chrome ext id.
-        //var extensionId = "pecocjibbceeifnjjehnjljphkobkcib";
-        var extensionId = "eemfhojdlndnlmdfhahfaoejhalbcbja";
-        chrome.runtime.sendMessage(extensionId, {nuggetsMessage: context},
-          function(response) {
-            console.log("Message sent");
-            console.log(response);
-            // if (!response.success)
-            //  handleError(url);
-          });
+
+        var extensionIds = ["eemfhojdlndnlmdfhahfaoejhalbcbja","pecocjibbceeifnjjehnjljphkobkcib"];
+        var numIds = extensionIds.length;
+        for (var i = 0; i < numIds; i++) {
+            var extensionId = extensionIds[i];
+            chrome.runtime.sendMessage(extensionId, {nuggetsMessage: context},
+              function(response) {
+                console.log("Message sent");
+                console.log(response);
+                // if (!response.success)
+                //  handleError(url);
+              });
+        }
       }
     </script>
 
