@@ -14,7 +14,7 @@ from google.auth.transport import requests
 CLIENT_ID = "347029058932-u9t5hv4a3e7v2u162hdnjgnjuu1frda0.apps.googleusercontent.com"
 
 
-@api_view(['GET'])
+@api_view(['POST'])
 def nuggets_to_review_by_user(request, user_id):
     try:
         user = User.objects.get(id=user_id)
@@ -23,10 +23,9 @@ def nuggets_to_review_by_user(request, user_id):
     if request.auth.user != user:
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-    if request.method == 'GET':
-        nuggets = Nugget.get_todays_review_nuggets_by_user(user)
-        serializer = NuggetSerializer(nuggets, many=True)
-        return Response(serializer.data)
+    nuggets = Nugget.get_todays_review_nuggets_by_user(user)
+    serializer = NuggetSerializer(nuggets, many=True)
+    return Response(serializer.data)
 
 
 @api_view(['GET', 'POST'])
