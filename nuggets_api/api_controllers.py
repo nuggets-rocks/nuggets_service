@@ -14,7 +14,7 @@ from google.auth.transport import requests
 CLIENT_ID = "347029058932-u9t5hv4a3e7v2u162hdnjgnjuu1frda0.apps.googleusercontent.com"
 
 
-@api_view(['POST'])
+@api_view(['GET'])
 def nuggets_to_review_by_user(request, user_id):
     try:
         user = User.objects.get(id=user_id)
@@ -112,7 +112,7 @@ def authenticate_user(request, user_name, password):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
 
-@api_view(['GET'])
+@api_view(['PUT'])
 def create_new_nugget(request, user_id, content, source, url):
     try:
         # Check for existing user
