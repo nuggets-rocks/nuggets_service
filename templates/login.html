@@ -5,17 +5,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="google-signin-scope" content="profile email">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
     <meta name="google-signin-client_id" content="347029058932-u9t5hv4a3e7v2u162hdnjgnjuu1frda0.apps.googleusercontent.com">
     <script src="https://apis.google.com/js/platform.js" async defer></script>
-    <title>Nuggets Login</title>
+    <title>Nuggets</title>
 </head>
-<body>
 
-    <div>
-        <img src="{% static "nuggets/nuggets_logo.png" %}"/>
+<body class = "signup-page">
+    <div class="container">
+        <h3 class="text-center text-secondary font-weight-light header-logo">Nuggets</h3>
+        <div class="card text-center" style="width: 22.125rem;">
+          <div class="card-body">
+            <h5 class="card-title">Let's get started</h5>
+            <p class="card-text">Remember everything you learn.</p>
+            <a href="#" class="btn btn-primary">Login with Google</a>
+          </div>
+        </div>
     </div>
-
-    <h3 id="displayText">Remember everything you learn!</h3>
 
     <div class="g-signin2" data-onsuccess="onSignIn" data-theme="light"></div>
 
